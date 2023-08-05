@@ -27,17 +27,17 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<Object> registerUser(
             @RequestBody @Validated(UserDto.UserView.RegistrationPost.class)
-            @JsonView(UserDto.UserView.RegistrationPost.class) UserDto dto) {
-        if (userService.existsByUsername(dto.getUsername())) {
+            @JsonView(UserDto.UserView.RegistrationPost.class) UserDto userDto) {
+        if (userService.existsByUsername(userDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Username is already taken !");
         }
 
-        if (userService.existsByEmail(dto.getEmail())) {
+        if (userService.existsByEmail(userDto.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Email is already taken !");
         }
 
         var userModel = new UserModel();
-        BeanUtils.copyProperties(dto, userModel);
+        BeanUtils.copyProperties(userDto, userModel);
         userModel.setUserStatus(UserStatus.ACTIVE);
         userModel.setUserType(UserType.STUDENT);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
